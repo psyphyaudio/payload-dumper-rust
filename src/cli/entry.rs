@@ -29,8 +29,7 @@ pub async fn run() -> Result<()> {
     let thread_count = if args.no_parallel {
         1
     } else {
-        args.threads
-            .unwrap_or_else(|| (num_cpus::get() * 2).min(32))
+        args.threads.unwrap_or_else(|| num_cpus::get())
     };
 
     ui.println(format!("- Initialized {} thread(s)", thread_count));
@@ -61,6 +60,7 @@ pub async fn run() -> Result<()> {
         &args.payload_path,
         args.user_agent.as_deref(),
         args.cookies.as_deref(),
+        args.dns.as_deref(),
     )
     .await?;
 
@@ -72,6 +72,7 @@ pub async fn run() -> Result<()> {
         payload_type,
         args.user_agent.as_deref(),
         args.cookies.as_deref(),
+        args.dns.as_deref(),
         &ui,
     )
     .await?;
@@ -175,6 +176,7 @@ pub async fn run() -> Result<()> {
                         url.clone(),
                         args.user_agent.as_deref(),
                         args.cookies.as_deref(),
+                        args.dns.as_deref(),
                     )
                     .await?;
                     let entry = ZipParser::find_payload_entry(&http_reader).await?;
